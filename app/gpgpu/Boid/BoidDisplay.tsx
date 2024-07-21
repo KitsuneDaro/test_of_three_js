@@ -10,8 +10,6 @@ export function BoidDisplay(container: HTMLElement){
     // FPSなどの表示
     const stats = new Stats();
 
-    let lastTime = performance.now();
-
     const renderer = new THREE.WebGLRenderer({ antialias: false });
     // 並行投影：Orthographic
     // 遠近法：Perspective
