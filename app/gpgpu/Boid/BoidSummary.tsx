@@ -14,8 +14,6 @@ export class BoidSummary{
 
         uniform sampler2D texturePosVel;
 
-        varying float z;
-
         uniform float time;
         uniform float delta;
 
@@ -43,10 +41,14 @@ export class BoidSummary{
             newPosition += pos;
 
             vColor = vec4( birdColor, 1.0 );
-            gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition, 1.0, 1.0 );
+            gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition, 0.0, 1.0 );
         }
     `;
     fs = `
+        void main() {
+            gl_FragColor = vec4( 1.0, 0.0, 1.0, 1.0 );
+
+        }
     `;
     geometry: BoidGeometry;
     material: THREE.ShaderMaterial;

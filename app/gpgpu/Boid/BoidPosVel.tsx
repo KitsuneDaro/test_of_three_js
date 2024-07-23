@@ -185,6 +185,7 @@ export class BoidPosVel{
         this.uniforms['time'].value = this.boidInfo.timeInfo.nowTime;
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
 
+        console.log(this.gpuCompute);
         this.gpuCompute.compute();
     }
 

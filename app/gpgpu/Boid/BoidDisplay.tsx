@@ -36,7 +36,7 @@ export function BoidDisplay(container: HTMLElement){
     animate();
 
     function init(container: HTMLElement) {
-        camera.position.set(0, 0, -1);
+        camera.position.set(0, 0, -10);
         camera.lookAt(new THREE.Vector3(0, 0, 0));
 
         scene.background = new THREE.Color( 0xff0000 );
@@ -49,7 +49,7 @@ export function BoidDisplay(container: HTMLElement){
 
         window.addEventListener( 'resize', onWindowResize );
 
-        scene.add(boidSummary.mesh);
+        // scene.add(boidSummary.mesh);
         scene.add(screenSummary.mesh);
     }
 
@@ -70,7 +70,7 @@ export function BoidDisplay(container: HTMLElement){
 
     function render() {
         timeInfo.update();
-        boidPosVel.update();
+        // boidPosVel.update();
         boidSummary.update();
         screenSummary.update();
         renderer.render(scene, camera);

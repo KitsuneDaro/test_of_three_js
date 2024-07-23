@@ -3,8 +3,25 @@ import { BoidInformation } from './BoidInformation';
 
 export class ScreenSummary{
     boidInfo: BoidInformation;
-    vs = ``;
-    fs = ``;
+    vs = `
+        uniform float time;
+        uniform float delta;
+        varying vec2 vUv;
+
+        void main()	{
+            vUv = uv;
+            
+            gl_Position = projectionMatrix *  viewMatrix  * vec4( position, 1.0 );
+        }
+    `;
+    fs = `
+        varying vec2 vUv;
+
+        void main() {
+            gl_FragColor = vec4( 0.0, 0.0, 0.0, 0.0 );
+
+        }
+    `;
     geometry: THREE.PlaneGeometry;
     material: THREE.ShaderMaterial;
     uniforms: { [key: string]: THREE.Uniform };
@@ -12,7 +29,7 @@ export class ScreenSummary{
 
     constructor(boidInfo: BoidInformation){
         this.boidInfo = boidInfo;
-        this.geometry = new THREE.PlaneGeometry(2.0, 2.0);
+        this.geometry = new THREE.PlaneGeometry(1.0, 1.0);
         this.material = new THREE.ShaderMaterial({
             uniforms: {
                 time: { type: "f", value: 0.0 },
