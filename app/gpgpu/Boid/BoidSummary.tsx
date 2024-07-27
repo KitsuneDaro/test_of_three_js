@@ -8,25 +8,21 @@ export class BoidSummary{
     boidPosVel: BoidPosVel;
     vs = `
         attribute vec2 reference;
-        attribute float birdVertex;
 
-        attribute vec3 birdColor;
+        uniform sampler2D boidPosVel;
 
-        uniform sampler2D texturePosVel;
-
+        uniform vec2 screenSize;
         uniform float time;
         uniform float delta;
 
         void main() {
-            vec2 pos = texture2D( texturePosVel, reference ).xy;
-            vec2 velocity = texture2D( texturPosVel, reference ).zw;
+            vec2 pos = texture2D( boidPosVel, reference ).xy;
+            vec2 velocity = texture2D( boidPosVel, reference ).zw;
 
-            vec2 newPosition = position;
+            vec3 newPosition = position;
 
             newPosition = mat3( modelMatrix ) * newPosition;
 
-
-            velocity.z *= -1.;
             float xy = length( velocity.xy );
 
             float cosr = velocity.x / xy;
@@ -37,17 +33,15 @@ export class BoidSummary{
                 sinr, cosr
             );
 
-            newPosition =  matr * newPosition;
-            newPosition += pos;
+            newPosition.xy =  matr * newPosition.xy;
+            newPosition.xy += pos / screenSize.x;
 
-            vColor = vec4( birdColor, 1.0 );
-            gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition, 0.0, 1.0 );
+            gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition.xyz, 1.0 );
         }
     `;
     fs = `
         void main() {
             gl_FragColor = vec4( 1.0, 0.0, 1.0, 1.0 );
-
         }
     `;
     geometry: BoidGeometry;
@@ -64,13 +58,20 @@ export class BoidSummary{
                 time: { type: "f", value: 0.0 },
                 delta: { type: "f", value: 0.0 },
                 resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                screenSize: { type: "v2", value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight) },
                 boidPosVel: { value: this.boidPosVel.getTexture() },
             },
             vertexShader: this.vs,
-            fragmentShader: this.fs
+            fragmentShader: this.fs,
+            side: THREE.DoubleSide,
         });// new THREE.MeshBasicMaterial( { color: 0xFF0000 } );
         this.uniforms = this.material.uniforms;
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+
+        this.mesh.matrixAutoUpdate = false;
+        this.mesh.updateMatrix();
+
+        console.log(this.boidPosVel.getTexture());
     }
 
     update(){

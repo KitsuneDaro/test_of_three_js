@@ -30,7 +30,7 @@ export function BoidDisplay(container: HTMLElement){
     const boidPosVel = new BoidPosVel(boidInfo);
     const boidSummary = new BoidSummary(boidInfo, boidPosVel);
 
-    const screenSummary = new ScreenSummary(boidInfo);
+    const screenSummary = new ScreenSummary(boidInfo, boidPosVel);
 
     init(container);
     animate();
@@ -49,12 +49,14 @@ export function BoidDisplay(container: HTMLElement){
 
         window.addEventListener( 'resize', onWindowResize );
 
-        // scene.add(boidSummary.mesh);
+        scene.add(boidSummary.mesh);
         scene.add(screenSummary.mesh);
+
+        console.log(boidPosVel);
     }
 
     function onWindowResize() {
-        //camera.aspect = window.innerWidth / window.innerHeight;
+        camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
         renderer.setSize( window.innerWidth, window.innerHeight );
@@ -70,7 +72,7 @@ export function BoidDisplay(container: HTMLElement){
 
     function render() {
         timeInfo.update();
-        // boidPosVel.update();
+        boidPosVel.update();
         boidSummary.update();
         screenSummary.update();
         renderer.render(scene, camera);

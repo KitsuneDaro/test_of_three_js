@@ -1,8 +1,10 @@
 import * as THREE from 'three';
 import { BoidInformation } from './BoidInformation';
+import { BoidPosVel } from './BoidPosVel';
 
 export class ScreenSummary{
     boidInfo: BoidInformation;
+    boidPosVel: BoidPosVel;
     vs = `
         uniform float time;
         uniform float delta;
@@ -15,11 +17,12 @@ export class ScreenSummary{
         }
     `;
     fs = `
+        uniform sampler2D boidPosVel;
+        uniform float delta;
         varying vec2 vUv;
 
         void main() {
-            gl_FragColor = vec4( 0.0, 0.0, 0.0, 0.0 );
-
+            gl_FragColor = vec4(texture2D( boidPosVel, vUv ).xyz, 0.1);
         }
     `;
     geometry: THREE.PlaneGeometry;
@@ -27,17 +30,20 @@ export class ScreenSummary{
     uniforms: { [key: string]: THREE.Uniform };
     mesh: THREE.Mesh;
 
-    constructor(boidInfo: BoidInformation){
+    constructor(boidInfo: BoidInformation, boidPosVel: BoidPosVel){
         this.boidInfo = boidInfo;
-        this.geometry = new THREE.PlaneGeometry(1.0, 1.0);
+        this.boidPosVel = boidPosVel;
+        this.geometry = new THREE.PlaneGeometry(1.0 / 2, 1.0);
         this.material = new THREE.ShaderMaterial({
             uniforms: {
                 time: { type: "f", value: 0.0 },
                 delta: { type: "f", value: 0.0 },
                 resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                boidPosVel: { value: this.boidPosVel.getTexture() },
             },
             vertexShader: this.vs,
-            fragmentShader: this.fs
+            fragmentShader: this.fs,
+            transparent: true
         });
         this.uniforms = this.material.uniforms;
         this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -46,5 +52,6 @@ export class ScreenSummary{
     update(){
         this.uniforms['time'].value = this.boidInfo.timeInfo.nowTime;
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
+        this.uniforms['boidPosVel'].value = this.boidPosVel.getTexture();
     }
 }

@@ -14,7 +14,7 @@ export class BoidPosVel{
         uniform float separationDistance;
         uniform float alignmentDistance;
         uniform float cohesionDistance;
-        uniform float speedLimit; // 9.0
+        uniform float speedLimit; // 9.0;
 
         const float width = resolution.x;
         const float height = resolution.y;
@@ -28,15 +28,11 @@ export class BoidPosVel{
         float separationThresh = 0.45;
         float alignmentThresh = 0.65;
 
-        const float UPPER_BOUNDS = BOUNDS;
-        const float LOWER_BOUNDS = -UPPER_BOUNDS;
-
         float rand( vec2 co ){
             return fract( sin( dot( co.xy, vec2(12.9898,78.233) ) ) * 43758.5453 );
         }
 
         void main() {
-
             zoneRadius = separationDistance + alignmentDistance + cohesionDistance;
             separationThresh = separationDistance / zoneRadius;
             alignmentThresh = ( separationDistance + alignmentDistance ) / zoneRadius;
@@ -46,8 +42,10 @@ export class BoidPosVel{
             vec2 uv = gl_FragCoord.xy / resolution.xy;
             vec2 boidPosition, boidVelocity;
 
-            vec2 selfPosition = texture2D( texturePosVel, uv ).xy;
-            vec2 selfVelocity = texture2D( texturePosVel, uv ).zw;
+            vec2 selfPosition = texture2D( boidPosVel, uv ).xy;
+            vec2 selfVelocity = texture2D( boidPosVel, uv ).zw;
+            gl_FragColor = vec4( selfPosition, selfVelocity );
+            return;
 
             float dist;
             vec2 dir; // direction
@@ -67,7 +65,7 @@ export class BoidPosVel{
                 for ( float x = 0.0; x < width; x++ ) {
 
                     vec2 ref = vec2( x + 0.5, y + 0.5 ) / resolution.xy;
-                    boidPosition = texture2D( texturePosVel, ref ).xy;
+                    boidPosition = texture2D( boidPosVel, ref ).xy;
 
                     dir = boidPosition - selfPosition;
                     dist = length( dir );
@@ -92,7 +90,7 @@ export class BoidPosVel{
                         float threshDelta = alignmentThresh - separationThresh;
                         float adjustedPercent = ( percent - separationThresh ) / threshDelta;
 
-                        boidVelocity = texture2D( texturePosVel, ref ).zw;
+                        boidVelocity = texture2D( boidPosVel, ref ).zw;
 
                         f = ( 0.5 - cos( adjustedPercent * PI_2 ) * 0.5 + 0.5 ) * delta;
                         velocity += normalize( boidVelocity ) * f;
@@ -134,8 +132,6 @@ export class BoidPosVel{
     variable: { [key: string]: any };
     uniforms: { [key: string]: THREE.Uniform };
 
-    lastTime: number;
-
     constructor(boidInfo: BoidInfomation){
         this.boidInfo = boidInfo;
         this.gpuCompute = new GPUComputationRenderer(this.boidInfo.boidWidth, this.boidInfo.boidHeight, this.boidInfo.renderer);
@@ -143,19 +139,17 @@ export class BoidPosVel{
         this.variable = this.gpuCompute.addVariable('boidPosVel', this.fs, this.texture);
         this.uniforms = this.variable.material.uniforms;
 
-        this.lastTime = performance.now();
+        this.init();
 
         this.gpuCompute.init();
-
-        this.init();
     }
 
     init() {
         const array = this.texture.image.data;
 
         for(let i = 0, arraySize = array.length; i < arraySize; i += 4) {
-            array[i + 0] = Math.random() * this.boidInfo.screenWidth;
-            array[i + 1] = Math.random() * this.boidInfo.screenHeight;
+            array[i + 0] = (Math.random() - 0.5) * this.boidInfo.screenWidth;
+            array[i + 1] = (Math.random() - 0.5) * this.boidInfo.screenHeight;
             
             const angle = Math.random() * 2 * Math.PI;
             const len = Math.random() * this.speedLimit;
@@ -165,6 +159,7 @@ export class BoidPosVel{
 
         this.uniforms['time'] = {type: 'f', value: 0.0};
         this.uniforms['delta'] = {type: 'f', value: 0.0};
+        this.uniforms['boidPosVel'] = {value: null};
         this.uniforms['separationDistance'] = {type: 'f', value: this.separationDistance};
         this.uniforms['alignmentDistance'] = {type: 'f', value: this.alignmentDistance};
         this.uniforms['cohesionDistance'] = {type: 'f', value: this.cohesionDistance};
@@ -177,19 +172,16 @@ export class BoidPosVel{
         // 依存性の設定
         // gpuCompute.setVariableDependencies( velocityVariable, [ positionVariable, velocityVariable ] );
         this.gpuCompute.setVariableDependencies( this.variable, [ this.variable ] );
-
-        this.lastTime = performance.now();
     }
 
     update(){
         this.uniforms['time'].value = this.boidInfo.timeInfo.nowTime;
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
-
-        console.log(this.gpuCompute);
+        this.uniforms['boidPosVel'].value = this.getTexture();
         this.gpuCompute.compute();
     }
 
     getTexture(){
-        return this.gpuCompute.getCurrentRenderTarget(this.variable).texture
+        return this.gpuCompute.getCurrentRenderTarget(this.variable).texture;
     }
 }
