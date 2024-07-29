@@ -5,6 +5,7 @@ import { BoidPosVel } from './BoidPosVel';
 import { BoidSummary } from './BoidSummary';
 import { BoidInformation } from './BoidInformation';
 import { ScreenSummary } from './ScreenSummary';
+import { VideoInformation } from './VideoInformation';
 
 export function BoidDisplay(container: HTMLElement){
     // FPSなどの表示
@@ -14,18 +15,21 @@ export function BoidDisplay(container: HTMLElement){
     // 並行投影：Orthographic
     // 遠近法：Perspective
     
-    const camera = new THREE.OrthographicCamera(-1, 1, -1, 1, 1, 3000);
+    const camera = new THREE.OrthographicCamera(-0.5, 0.5, -0.5, 0.5, 0.5, 3000);
     const scene = new THREE.Scene();
 
-    const screenWidth = 1920;
-    const screenHeight = 1080;
+    const screenWidth = 480;
+    const screenHeight = 360;
 
     const timeInfo = new TimeInformation();
 
-    // boidPosVel
-    const boidWidth = 32;
-    const boidHeight = 32;
-    const boidInfo = new BoidInformation(boidWidth, boidHeight, screenWidth, screenHeight, renderer, timeInfo);
+    // video
+    const videoInfo = new VideoInformation('./video/video.mp4');
+
+    // boid
+    const boidWidth = 128;
+    const boidHeight = 128;
+    const boidInfo = new BoidInformation(boidWidth, boidHeight, screenWidth, screenHeight, renderer, new THREE.Vector2(window.innerWidth, window.innerHeight), timeInfo, videoInfo);
 
     const boidPosVel = new BoidPosVel(boidInfo);
     const boidSummary = new BoidSummary(boidInfo, boidPosVel);
@@ -41,26 +45,35 @@ export function BoidDisplay(container: HTMLElement){
 
         scene.background = new THREE.Color( 0xff0000 );
 
-        renderer.setPixelRatio( window.devicePixelRatio );
-        renderer.setSize( window.innerWidth, window.innerHeight );
         container.appendChild( renderer.domElement );
-
         container.appendChild( stats.dom );
 
         window.addEventListener( 'resize', onWindowResize );
+        onWindowResize();
 
         scene.add(boidSummary.mesh);
         scene.add(screenSummary.mesh);
-
-        console.log(boidPosVel);
+        
+        videoInfo.element.play();
     }
 
     function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
+        if(window.innerHeight / window.innerWidth > screenHeight / screenWidth) {
+            camera.left = -0.5;
+            camera.right = 0.5;
+            camera.bottom = window.innerHeight / window.innerWidth * -0.5;
+            camera.top = window.innerHeight / window.innerWidth * 0.5;
+        } else {
+            camera.left = window.innerWidth / window.innerHeight * -0.5 * screenHeight / screenWidth;
+            camera.right = window.innerWidth / window.innerHeight * 0.5 * screenHeight / screenWidth;
+            camera.bottom = -0.5 * screenHeight / screenWidth;
+            camera.top = 0.5 * screenHeight / screenWidth;
+        }
         camera.updateProjectionMatrix();
+        renderer.setPixelRatio(window.devicePixelRatio);
 
         renderer.setSize( window.innerWidth, window.innerHeight );
-        screenSummary.uniforms['resolution'].value = new THREE.Vector2(window.innerWidth, window.innerHeight);
+        boidInfo.resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
     }
 
     function animate() {

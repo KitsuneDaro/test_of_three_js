@@ -29,19 +29,19 @@ export class BoidSummary{
             float sinr = velocity.y / xy;
 
             mat2 matr =  mat2(
-                cosr, -sinr,
-                sinr, cosr
+                cosr, sinr,
+                -sinr, cosr
             );
 
             newPosition.xy =  matr * newPosition.xy;
             newPosition.xy += pos / screenSize.x;
 
-            gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition.xyz, 1.0 );
+            gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition.xy, -1.0, 1.0 );
         }
     `;
     fs = `
         void main() {
-            gl_FragColor = vec4( 1.0, 0.0, 1.0, 1.0 );
+            gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 );
         }
     `;
     geometry: BoidGeometry;
@@ -77,6 +77,7 @@ export class BoidSummary{
     update(){
         this.uniforms['time'].value = this.boidInfo.timeInfo.nowTime;
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
+        this.uniforms['resolution'].value = this.boidInfo.resolution;
         this.uniforms['boidPosVel'].value = this.boidPosVel.getTexture();
     }
 }

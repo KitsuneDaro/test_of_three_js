@@ -33,15 +33,15 @@ export class BoidGeometry extends THREE.BufferGeometry {
             // Wings
 
             verts_push(
-                0, 7.5, 0,
-                0, -2.5, 0,
-                5, -7.5, 0,
+                7.5, 0, 0,
+                -2.5, 0, 0,
+                -7.5, 5, 0,
             );
 
             verts_push(
-                0, 7.5, 0,
-                0, -2.5, 0,
-                -5, -7.5, 0,
+                7.5, 0, 0,
+                -2.5, 0, 0,
+                -7.5, -5, 0,
             );
         }
 
@@ -68,7 +68,7 @@ export class BoidGeometry extends THREE.BufferGeometry {
 
         }
 
-        this.scale( 0.1 / boidInfo.boidWidth, 0.1 / boidInfo.boidWidth, 0.01 );
+        this.scale( 0.3 / boidInfo.screenWidth, 0.3 / boidInfo.screenWidth, 0.01 );
     }
 
 }

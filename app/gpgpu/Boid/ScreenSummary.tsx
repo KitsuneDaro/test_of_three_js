@@ -17,12 +17,12 @@ export class ScreenSummary{
         }
     `;
     fs = `
-        uniform sampler2D boidPosVel;
+        uniform sampler2D video;
         uniform float delta;
         varying vec2 vUv;
 
         void main() {
-            gl_FragColor = vec4(texture2D( boidPosVel, vUv ).xyz, 0.1);
+            gl_FragColor = texture2D(video, vUv);
         }
     `;
     geometry: THREE.PlaneGeometry;
@@ -33,17 +33,18 @@ export class ScreenSummary{
     constructor(boidInfo: BoidInformation, boidPosVel: BoidPosVel){
         this.boidInfo = boidInfo;
         this.boidPosVel = boidPosVel;
-        this.geometry = new THREE.PlaneGeometry(1.0 / 2, 1.0);
+        this.geometry = new THREE.PlaneGeometry(1.0, boidInfo.screenHeight / boidInfo.screenWidth);
         this.material = new THREE.ShaderMaterial({
             uniforms: {
                 time: { type: "f", value: 0.0 },
                 delta: { type: "f", value: 0.0 },
                 resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
                 boidPosVel: { value: this.boidPosVel.getTexture() },
+                video: {value: null},
             },
             vertexShader: this.vs,
             fragmentShader: this.fs,
-            transparent: true
+            side: THREE.DoubleSide,
         });
         this.uniforms = this.material.uniforms;
         this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -53,5 +54,6 @@ export class ScreenSummary{
         this.uniforms['time'].value = this.boidInfo.timeInfo.nowTime;
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
         this.uniforms['boidPosVel'].value = this.boidPosVel.getTexture();
+        this.uniforms['video'].value = this.boidInfo.videoInfo.texture;
     }
 }

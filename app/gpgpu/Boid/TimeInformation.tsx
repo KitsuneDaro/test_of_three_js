@@ -12,8 +12,8 @@ export class TimeInformation{
         this.nowTime = performance.now();
         this.delta = (this.nowTime - this.lastTime) / 1000;
 
-        if ( this.delta > 1 ) {
-            this.delta = 1;
+        if ( this.delta > 1 / 30 ) {
+            this.delta = 1 / 30;
         } // safety cap on large deltas
         
         this.lastTime = this.nowTime;

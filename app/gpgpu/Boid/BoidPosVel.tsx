@@ -3,10 +3,12 @@ import { GPUComputationRenderer } from 'three/addons/misc/GPUComputationRenderer
 import { BoidInfomation } from './BoidInformation';
 
 export class BoidPosVel{
-    speedLimit: number = 9.0;
-    separationDistance: number = 1;
-    alignmentDistance: number = 1;
-    cohesionDistance: number = 1;
+    speedLimit: number = 80.0;
+    separationDistance: number = 50;
+    alignmentDistance: number = 30;
+    cohesionDistance: number = 20;
+    returnAcc: number = 100.0;
+    screenMargin: number = 0.0;
 
     fs: string = `
         uniform float time;
@@ -14,7 +16,10 @@ export class BoidPosVel{
         uniform float separationDistance;
         uniform float alignmentDistance;
         uniform float cohesionDistance;
-        uniform float speedLimit; // 9.0;
+        uniform float speedLimit;
+        uniform float returnAcc;
+        uniform float screenMargin;
+        uniform vec2 screenSize;
 
         const float width = resolution.x;
         const float height = resolution.y;
@@ -44,8 +49,6 @@ export class BoidPosVel{
 
             vec2 selfPosition = texture2D( boidPosVel, uv ).xy;
             vec2 selfVelocity = texture2D( boidPosVel, uv ).zw;
-            gl_FragColor = vec4( selfPosition, selfVelocity );
-            return;
 
             float dist;
             vec2 dir; // direction
@@ -116,12 +119,25 @@ export class BoidPosVel{
             // this make tends to fly around than down or up
             // if (velocity.y > 0.) velocity.y *= (1. - 0.2 * delta);
 
+            vec2 position = selfPosition + velocity * delta;
+
             // Speed Limits
+
             if ( length( velocity ) > limit ) {
                 velocity = normalize( velocity ) * limit;
             }
 
-            vec2 position = boidPosition + velocity * delta;
+            if (abs(position.x) > screenSize.x * (1.0 - screenMargin) / 2.0 || abs(position.y) > screenSize.y * (1.0 - screenMargin) / 2.0) {
+                velocity -= position / (screenSize * (1.0 - screenMargin) / 2.0) * returnAcc;
+            } else {
+                //velocity -= pow(position / (screenSize * (1.0 - screenMargin) / 2.0), vec2(2.0, 2.0)) * returnAcc * 0.1;
+            }
+
+            if ( length( velocity ) > limit ) {
+                velocity = normalize( velocity ) * limit;
+            }
+
+            position = selfPosition + velocity * delta;
 
             gl_FragColor = vec4( position, velocity );
         }
@@ -164,6 +180,9 @@ export class BoidPosVel{
         this.uniforms['alignmentDistance'] = {type: 'f', value: this.alignmentDistance};
         this.uniforms['cohesionDistance'] = {type: 'f', value: this.cohesionDistance};
         this.uniforms['speedLimit'] = {type: 'f', value: this.speedLimit};
+        this.uniforms['returnAcc'] = {type: 'f', value: this.returnAcc};
+        this.uniforms['screenMargin'] = {type: 'f', value: this.screenMargin};
+        this.uniforms['screenSize'] = {type: "v2", value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight)};
     
         // 縦横のリピート設定
         this.texture.wrapS = THREE.RepeatWrapping;
