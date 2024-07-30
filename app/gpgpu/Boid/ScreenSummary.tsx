@@ -22,7 +22,7 @@ export class ScreenSummary{
         varying vec2 vUv;
 
         void main() {
-            gl_FragColor = texture2D(video, vUv);
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);//vec4(texture2D(video, vUv).xyz, 0.5);
         }
     `;
     geometry: THREE.PlaneGeometry;
@@ -45,6 +45,7 @@ export class ScreenSummary{
             vertexShader: this.vs,
             fragmentShader: this.fs,
             side: THREE.DoubleSide,
+            transparent: true,
         });
         this.uniforms = this.material.uniforms;
         this.mesh = new THREE.Mesh(this.geometry, this.material);

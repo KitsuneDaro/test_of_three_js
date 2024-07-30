@@ -10,14 +10,18 @@ export class BoidSummary{
         attribute vec2 reference;
 
         uniform sampler2D boidPosVel;
+        uniform sampler2D video;
 
         uniform vec2 screenSize;
         uniform float time;
         uniform float delta;
 
+        const float scaleChangeRatio = 0.7;
+
         void main() {
             vec2 pos = texture2D( boidPosVel, reference ).xy;
             vec2 velocity = texture2D( boidPosVel, reference ).zw;
+            float videoPixel = texture2D( video, pos / screenSize + 0.5 ).x;
 
             vec3 newPosition = position;
 
@@ -33,7 +37,7 @@ export class BoidSummary{
                 -sinr, cosr
             );
 
-            newPosition.xy =  matr * newPosition.xy;
+            newPosition.xy =  matr * newPosition.xy * ((1.0 - scaleChangeRatio) + videoPixel * scaleChangeRatio);
             newPosition.xy += pos / screenSize.x;
 
             gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition.xy, -1.0, 1.0 );
@@ -59,7 +63,8 @@ export class BoidSummary{
                 delta: { type: "f", value: 0.0 },
                 resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
                 screenSize: { type: "v2", value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight) },
-                boidPosVel: { value: this.boidPosVel.getTexture() },
+                boidPosVel: { value: null },
+                video: { value: null },
             },
             vertexShader: this.vs,
             fragmentShader: this.fs,
@@ -79,5 +84,6 @@ export class BoidSummary{
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
         this.uniforms['resolution'].value = this.boidInfo.resolution;
         this.uniforms['boidPosVel'].value = this.boidPosVel.getTexture();
+        this.uniforms['video'].value = this.boidInfo.videoInfo.texture;
     }
 }

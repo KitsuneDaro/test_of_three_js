@@ -20,6 +20,7 @@ export class BoidPosVel{
         uniform float returnAcc;
         uniform float screenMargin;
         uniform vec2 screenSize;
+        uniform sampler2D video;
 
         const float width = resolution.x;
         const float height = resolution.y;
@@ -38,17 +39,18 @@ export class BoidPosVel{
         }
 
         void main() {
+            vec2 uv = gl_FragCoord.xy / resolution.xy;
+
+            vec2 selfPosition = texture2D( boidPosVel, uv ).xy;
+            vec2 selfVelocity = texture2D( boidPosVel, uv ).zw;
+            float videoPixel = 1.0 - texture2D( video, selfPosition / screenSize + 0.5 ).x;
+
             zoneRadius = separationDistance + alignmentDistance + cohesionDistance;
             separationThresh = separationDistance / zoneRadius;
             alignmentThresh = ( separationDistance + alignmentDistance ) / zoneRadius;
             zoneRadiusSquared = zoneRadius * zoneRadius;
 
-
-            vec2 uv = gl_FragCoord.xy / resolution.xy;
             vec2 boidPosition, boidVelocity;
-
-            vec2 selfPosition = texture2D( boidPosVel, uv ).xy;
-            vec2 selfVelocity = texture2D( boidPosVel, uv ).zw;
 
             float dist;
             vec2 dir; // direction
@@ -137,7 +139,7 @@ export class BoidPosVel{
                 velocity = normalize( velocity ) * limit;
             }
 
-            position = selfPosition + velocity * delta;
+            position = selfPosition + velocity * delta * (1.0 - videoPixel);
 
             gl_FragColor = vec4( position, velocity );
         }
@@ -183,6 +185,7 @@ export class BoidPosVel{
         this.uniforms['returnAcc'] = {type: 'f', value: this.returnAcc};
         this.uniforms['screenMargin'] = {type: 'f', value: this.screenMargin};
         this.uniforms['screenSize'] = {type: "v2", value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight)};
+        this.uniforms['video'] = {value: null};
     
         // 縦横のリピート設定
         this.texture.wrapS = THREE.RepeatWrapping;
@@ -197,6 +200,7 @@ export class BoidPosVel{
         this.uniforms['time'].value = this.boidInfo.timeInfo.nowTime;
         this.uniforms['delta'].value = this.boidInfo.timeInfo.delta;
         this.uniforms['boidPosVel'].value = this.getTexture();
+        this.uniforms['video'].value = this.boidInfo.videoInfo.texture;
         this.gpuCompute.compute();
     }
 

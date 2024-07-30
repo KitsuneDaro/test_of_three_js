@@ -24,7 +24,7 @@ export function BoidDisplay(container: HTMLElement){
     const timeInfo = new TimeInformation();
 
     // video
-    const videoInfo = new VideoInformation('./video/video.mp4');
+    const videoInfo = new VideoInformation('/video/video.mp4');
 
     // boid
     const boidWidth = 128;
@@ -54,7 +54,7 @@ export function BoidDisplay(container: HTMLElement){
         scene.add(boidSummary.mesh);
         scene.add(screenSummary.mesh);
         
-        videoInfo.element.play();
+        window.addEventListener('click', videoInfo.changePlayAndStop.bind(videoInfo));
     }
 
     function onWindowResize() {
