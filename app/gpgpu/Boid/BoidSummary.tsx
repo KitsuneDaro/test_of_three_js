@@ -37,7 +37,7 @@ export class BoidSummary{
                 -sinr, cosr
             );
 
-            newPosition.xy =  matr * newPosition.xy * ((1.0 - scaleChangeRatio) + videoPixel * scaleChangeRatio);
+            newPosition.xy =  matr * newPosition.xy * ((1.0 - scaleChangeRatio) + sqrt(videoPixel) * scaleChangeRatio);
             newPosition.xy += pos / screenSize.x;
 
             gl_Position = projectionMatrix *  viewMatrix  * vec4( newPosition.xy, -1.0, 1.0 );

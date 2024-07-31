@@ -55,8 +55,22 @@ export function BoidDisplay(container: HTMLElement){
         scene.add(screenSummary.mesh);
         
         window.addEventListener('click', videoInfo.changePlayAndStop.bind(videoInfo));
+        window.addEventListener( 'keydown', onKeyDown );
     }
 
+    function onKeyDown(event: KeyboardEvent) {
+        if (event.code == 'KeyF'){
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                renderer.domElement.requestFullscreen();
+            }
+        }
+
+        if (event.code == 'Space') {
+            videoInfo.changePlayAndStop();
+        }
+    }
     function onWindowResize() {
         if(window.innerHeight / window.innerWidth > screenHeight / screenWidth) {
             camera.left = -0.5;

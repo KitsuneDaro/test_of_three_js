@@ -43,7 +43,7 @@ export class BoidPosVel{
 
             vec2 selfPosition = texture2D( boidPosVel, uv ).xy;
             vec2 selfVelocity = texture2D( boidPosVel, uv ).zw;
-            float videoPixel = 1.0 - texture2D( video, selfPosition / screenSize + 0.5 ).x;
+            float videoPixel = texture2D( video, selfPosition / screenSize + 0.5 ).x;
 
             zoneRadius = separationDistance + alignmentDistance + cohesionDistance;
             separationThresh = separationDistance / zoneRadius;
@@ -139,7 +139,7 @@ export class BoidPosVel{
                 velocity = normalize( velocity ) * limit;
             }
 
-            position = selfPosition + velocity * delta * (1.0 - videoPixel);
+            position = selfPosition + velocity * delta * videoPixel;
 
             gl_FragColor = vec4( position, velocity );
         }
