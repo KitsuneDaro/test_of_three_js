@@ -6,6 +6,8 @@ import { BoidSummary } from './BoidSummary';
 import { BoidInformation } from './BoidInformation';
 import { ScreenSummary } from './ScreenSummary';
 import { VideoInformation } from './VideoInformation';
+import basePath from "../../../next.config.mjs" // 追加
+const BASE_PATH = basePath ? basePath : "" // 追加
 
 export function BoidDisplay(container: HTMLElement){
     // FPSなどの表示
@@ -24,7 +26,7 @@ export function BoidDisplay(container: HTMLElement){
     const timeInfo = new TimeInformation();
 
     // video
-    const videoInfo = new VideoInformation('/video/video.mp4');
+    const videoInfo = new VideoInformation(`${BASE_PATH}/video/video.mp4`);
 
     // boid
     const boidWidth = 128;
