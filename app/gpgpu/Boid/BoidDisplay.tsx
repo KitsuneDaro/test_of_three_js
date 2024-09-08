@@ -26,7 +26,7 @@ export function BoidDisplay(container: HTMLElement){
     const timeInfo = new TimeInformation();
 
     // video
-    const videoInfo = new VideoInformation(`${BASE_PATH.toString()}/video/video.mp4`);
+    const videoInfo = new VideoInformation(`${BASE_PATH}/video/video.mp4`);
 
     // boid
     const boidWidth = 128;
