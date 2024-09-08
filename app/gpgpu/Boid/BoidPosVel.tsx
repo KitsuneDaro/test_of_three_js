@@ -148,7 +148,7 @@ export class BoidPosVel{
     gpuCompute: GPUComputationRenderer;
     texture: THREE.Texture;
     variable: Variable;
-    uniforms: { [key: string]: THREE.Uniform };
+    uniforms: { [key: string]: THREE.IUniform };
 
     constructor(boidInfo: BoidInformation){
         this.boidInfo = boidInfo;
