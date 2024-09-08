@@ -6,8 +6,8 @@ import { BoidSummary } from './BoidSummary';
 import { BoidInformation } from './BoidInformation';
 import { ScreenSummary } from './ScreenSummary';
 import { VideoInformation } from './VideoInformation';
-import basePath from "../../../next.config.mjs" // 追加
-const BASE_PATH = basePath ? basePath : "" // 追加
+import nextConfig from "../../../next.config.mjs" // 追加
+const BASE_PATH = nextConfig.basePath ? nextConfig.basePath : "" // 追加
 
 export function BoidDisplay(container: HTMLElement){
     // FPSなどの表示
