@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 import { BoidGeometry } from './BoidGeometry';
-import { BoidInfomation } from './BoidInformation';
+import { BoidInformation } from './BoidInformation';
 import { BoidPosVel } from './BoidPosVel';
 
 export class BoidSummary{
-    boidInfo: BoidInfomation;
+    boidInfo: BoidInformation;
     boidPosVel: BoidPosVel;
     vs = `
         attribute vec2 reference;
@@ -53,16 +53,16 @@ export class BoidSummary{
     uniforms: { [key: string]: THREE.IUniform };
     mesh: THREE.Mesh;
 
-    constructor(boidInfo: BoidInfomation, boidPosVel: BoidPosVel){
+    constructor(boidInfo: BoidInformation, boidPosVel: BoidPosVel){
         this.boidInfo = boidInfo;
         this.boidPosVel = boidPosVel;
         this.geometry = new BoidGeometry(this.boidInfo);
         this.material = new THREE.ShaderMaterial({
             uniforms: {
-                time: { type: "f", value: 0.0 },
-                delta: { type: "f", value: 0.0 },
-                resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-                screenSize: { type: "v2", value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight) },
+                time: { value: 0.0 },
+                delta: { value: 0.0 },
+                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                screenSize: { value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight) },
                 boidPosVel: { value: null },
                 video: { value: null },
             },

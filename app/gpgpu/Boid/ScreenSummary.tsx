@@ -36,9 +36,9 @@ export class ScreenSummary{
         this.geometry = new THREE.PlaneGeometry(1.0, boidInfo.screenHeight / boidInfo.screenWidth);
         this.material = new THREE.ShaderMaterial({
             uniforms: {
-                time: { type: "f", value: 0.0 },
-                delta: { type: "f", value: 0.0 },
-                resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                time: { value: 0.0 },
+                delta: { value: 0.0 },
+                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
                 boidPosVel: { value: this.boidPosVel.getTexture() },
                 video: {value: null},
             },
