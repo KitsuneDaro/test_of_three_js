@@ -27,7 +27,7 @@ export class ScreenSummary{
     `;
     geometry: THREE.PlaneGeometry;
     material: THREE.ShaderMaterial;
-    uniforms: { [key: string]: THREE.Uniform };
+    uniforms: { [key: string]: THREE.IUniform };
     mesh: THREE.Mesh;
 
     constructor(boidInfo: BoidInformation, boidPosVel: BoidPosVel){

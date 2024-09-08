@@ -9,7 +9,8 @@ export const metadata: Metadata = {
 };
 
 const bodyStyle = {
-    'margin': 0
+    'margin': 0,
+    'overflow': 'hidden'
 };
 
 export default function RootLayout({

@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import { BoidInfomation } from './BoidInformation';
+import { BoidInformation } from './BoidInformation';
 
 export class BoidGeometry extends THREE.BufferGeometry {
 
-    constructor(boidInfo: BoidInfomation) {
+    constructor(boidInfo: BoidInformation) {
         super();
 
         const trianglesPerBoid = 2;
@@ -23,9 +23,9 @@ export class BoidGeometry extends THREE.BufferGeometry {
 
         let v = 0;
 
-        function verts_push() {
-            for ( let i = 0; i < arguments.length; i ++ ) {
-                vertices.array[ v ++ ] = arguments[ i ];
+        function verts_push(...arg: number[]) {
+            for ( let i = 0; i < arg.length; i ++ ) {
+                vertices.array[ v ++ ] = arg[ i ];
             }
         }
 

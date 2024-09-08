@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { GPUComputationRenderer } from 'three/addons/misc/GPUComputationRenderer.js';
-import { BoidInfomation } from './BoidInformation';
+import { GPUComputationRenderer, Variable } from 'three/addons/misc/GPUComputationRenderer.js';
+import { BoidInformation } from './BoidInformation';
 
 export class BoidPosVel{
     speedLimit: number = 80.0;
@@ -144,13 +144,13 @@ export class BoidPosVel{
             gl_FragColor = vec4( position, velocity );
         }
     `;
-    boidInfo: BoidInfomation;
+    boidInfo: BoidInformation;
     gpuCompute: GPUComputationRenderer;
-    texture: THREE.GPUTexture;
-    variable: { [key: string]: any };
+    texture: THREE.Texture;
+    variable: Variable;
     uniforms: { [key: string]: THREE.Uniform };
 
-    constructor(boidInfo: BoidInfomation){
+    constructor(boidInfo: BoidInformation){
         this.boidInfo = boidInfo;
         this.gpuCompute = new GPUComputationRenderer(this.boidInfo.boidWidth, this.boidInfo.boidHeight, this.boidInfo.renderer);
         this.texture = this.gpuCompute.createTexture();
@@ -175,16 +175,16 @@ export class BoidPosVel{
             array[i + 3] = len * Math.sin(angle);
         }
 
-        this.uniforms['time'] = {type: 'f', value: 0.0};
-        this.uniforms['delta'] = {type: 'f', value: 0.0};
+        this.uniforms['time'] = {value: 0.0};
+        this.uniforms['delta'] = {value: 0.0};
         this.uniforms['boidPosVel'] = {value: null};
-        this.uniforms['separationDistance'] = {type: 'f', value: this.separationDistance};
-        this.uniforms['alignmentDistance'] = {type: 'f', value: this.alignmentDistance};
-        this.uniforms['cohesionDistance'] = {type: 'f', value: this.cohesionDistance};
-        this.uniforms['speedLimit'] = {type: 'f', value: this.speedLimit};
-        this.uniforms['returnAcc'] = {type: 'f', value: this.returnAcc};
-        this.uniforms['screenMargin'] = {type: 'f', value: this.screenMargin};
-        this.uniforms['screenSize'] = {type: "v2", value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight)};
+        this.uniforms['separationDistance'] = {value: this.separationDistance};
+        this.uniforms['alignmentDistance'] = {value: this.alignmentDistance};
+        this.uniforms['cohesionDistance'] = {value: this.cohesionDistance};
+        this.uniforms['speedLimit'] = {value: this.speedLimit};
+        this.uniforms['returnAcc'] = {value: this.returnAcc};
+        this.uniforms['screenMargin'] = {value: this.screenMargin};
+        this.uniforms['screenSize'] = {value: new THREE.Vector2(this.boidInfo.screenWidth, this.boidInfo.screenHeight)};
         this.uniforms['video'] = {value: null};
     
         // 縦横のリピート設定
@@ -205,6 +205,6 @@ export class BoidPosVel{
     }
 
     getTexture(){
-        return this.gpuCompute.getCurrentRenderTarget(this.variable).texture;
+        return this.gpuCompute.getCurrentRenderTarget(this.variable as Variable).texture;
     }
 }

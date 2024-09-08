@@ -1,0 +1,104 @@
+
+        /*
+        for (const crossSectionIndexStr0 in crossSectionDictonary) {
+            const crossSectionIndex0 = Number(crossSectionIndexStr0);
+            
+            for (const crossSectionIndexStr1 in crossSectionDictonary) {
+                const crossSectionIndex1 = Number(crossSectionIndexStr1);
+                
+                if (crossSectionIndex0 < crossSectionIndex1) {
+                    if (
+                        halfVerticeArray[crossSectionIndex0 * 3 + 0] == halfVerticeArray[crossSectionIndex1 * 3 + 0]
+                        && halfVerticeArray[crossSectionIndex0 * 3 + 1] == halfVerticeArray[crossSectionIndex1 * 3 + 1]
+                        && halfVerticeArray[crossSectionIndex0 * 3 + 2] == halfVerticeArray[crossSectionIndex1 * 3 + 2]
+                    ) {
+                        for (let targetIndexInCrossSection1 = 0; targetIndexInCrossSection1 < crossSectionDictonary[crossSectionIndex1].length; targetIndexInCrossSection1++) {
+                            let targetIndex = crossSectionDictonary[crossSectionIndex1][targetIndexInCrossSection1];
+                            let renewTargetIndex = targetIndex;
+                            if (deletedCrossSectionDictonary[targetIndex] !== undefined) {
+                                renewTargetIndex = deletedCrossSectionDictonary[targetIndex];
+                            }
+
+                            const targetIndexInCrossSection0 = crossSectionDictonary[crossSectionIndex0].findIndex((value) => {return value == targetIndex});
+
+                            if (targetIndexInCrossSection0 > -1) {
+                                crossSectionDictonary[crossSectionIndex0].splice(targetIndexInCrossSection0, 1);
+                                let crossSectionIndex0InTarget = 0;
+                                
+                                if (renewTargetIndex === targetIndex) {
+                                    crossSectionIndex0InTarget = crossSectionDictonary[targetIndex].findIndex((value) => {return value == crossSectionIndex0});
+                                    crossSectionDictonary[targetIndex].splice(crossSectionIndex0InTarget, 1);
+                                } else {
+                                    crossSectionIndex0InTarget = crossSectionDictonary[renewTargetIndex].findIndex((value) => {return value == crossSectionIndex0});
+                                    crossSectionDictonary[renewTargetIndex].splice(crossSectionIndex0InTarget, 1);
+                                }
+                            } else {
+                                if (renewTargetIndex === targetIndex) {
+                                    crossSectionDictonary[crossSectionIndex0].push(renewTargetIndex);
+                                    crossSectionDictonary[renewTargetIndex].push(crossSectionIndex0);
+                                    continue;
+                                }
+
+                                const renewTargetIndexInCrossSection0 = crossSectionDictonary[crossSectionIndex0].findIndex((value) => {return value == renewTargetIndex});
+
+                                if (renewTargetIndexInCrossSection0 > -1) {
+                                    crossSectionDictonary[crossSectionIndex0].splice(targetIndexInCrossSection0, 1);
+
+                                    const crossSectionIndex0InTarget = crossSectionDictonary[renewTargetIndex].findIndex((value) => {return value == crossSectionIndex0});
+                                    crossSectionDictonary[renewTargetIndex].splice(crossSectionIndex0InTarget, 1);
+                                } else {
+                                    crossSectionDictonary[crossSectionIndex0].push(renewTargetIndex);
+                                    crossSectionDictonary[renewTargetIndex].push(crossSectionIndex0);
+                                }
+                            }
+                        }
+
+                        delete crossSectionDictonary[crossSectionIndex1];
+                        deletedCrossSectionDictonary[crossSectionIndex1] = crossSectionIndex0;
+                        console.log(deletedCrossSectionDictonary[crossSectionIndex1]);
+                    }
+                }
+            }
+        }
+        */
+
+
+        // 3. CCWに並び替える
+        // 多分いらない
+        /*
+        for (let cycleIndex = 0; cycleIndex < cycleArray.length; cycleIndex++) {
+            const cycle = cycleArray[cycleIndex];
+
+            for (let lineIndex = 0; lineIndex < cycleArray.length - 1; lineIndex++) {
+                crossSectionVertice2D[cycle[lineIndex]]
+
+                crossSectionVertice2D[cycle[lineIndex] + 1]
+            }
+        }
+        */
+
+        /*
+                const childRelationCycle = childRelationCycleArray[parentCycleIndex];
+
+                for (let childCycleIndex = 0; childCycleIndex < childRelationCycle.length; childCycleIndex++) {
+                    const tempIndex = childRelationCycle[childCycleIndex];
+                    const childLength = parentRelationCycleArray[tempIndex].length;
+
+                    if (childLength > 1) {
+                        parentRelationCycleArray[tempIndex].splice(parentRelationCycleArray[tempIndex].findIndex((index: number) => (index == parentCycleIndex)), 1)
+                    } else {
+                        
+                    }
+                }
+        */
+
+
+        /*
+        for (let deletedCycleIndexArrayIndex = 0; deletedCycleIndexArrayIndex < deletedCycleIndexArray.length; deletedCycleIndexArrayIndex++) {
+            const deletedCycleIndex = deletedCycleIndexArray[deletedCycleIndexArrayIndex] - deletedCycleIndexArrayIndex;
+
+            cycleArray.splice(deletedCycleIndex, 1);
+        }
+
+        console.log(cycleArray);
+        */
